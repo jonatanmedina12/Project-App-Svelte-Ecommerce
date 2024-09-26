@@ -10,7 +10,7 @@
       try {
         orders = await getOrders();
       } catch (e) {
-        if (e instanceof Error) {
+  if (e instanceof Error) {
           error = e.message;
         } else {
           error = 'An unknown error occurred';
