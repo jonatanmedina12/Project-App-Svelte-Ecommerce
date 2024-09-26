@@ -1,21 +1,64 @@
-<script>
+<script lang="ts">
     import { page } from '$app/stores';
+    import { logout } from '$lib/services/api';
+    import { auth } from '$lib/stores/auth';
+
+
+
+  async function handleLogout() {
+    await logout();
+    auth.logout();
+  }
+
+
   </script>
   
   <header>
-    <nav>
-      <a href="/" class:active={$page.url.pathname === '/'}>Inicio</a>
-      <a href="/products" class:active={$page.url.pathname.startsWith('/products')}>Productos</a>
-      <a href="/login" class:active={$page.url.pathname === '/login'}>Iniciar sesión</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">E-commerce Platform</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" class:active={$page.url.pathname === '/'} href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" class:active={$page.url.pathname === '/products'} href="/products">Products</a>
+            </li>
+            {#if $auth.isAuthenticated}
+              <li class="nav-item">
+                <a class="nav-link" class:active={$page.url.pathname === '/orders'} href="/orders">Orders</a>
+              </li>
+            {/if}
+          </ul>
+          <ul class="navbar-nav">
+            {#if $auth.isAuthenticated}
+              <li class="nav-item">
+                <span class="nav-link">Welcome, {$auth.user?.username ?? "Sin datos"}</span>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/" on:click|preventDefault={handleLogout}>Logout</a>
+              </li>
+            {:else}
+              <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+              </li>
+            {/if}
+          </ul>
+        </div>
+      </div>
     </nav>
   </header>
   
   <style>
-    header {
-      background-color: #333;
-      padding: 1rem;
-    }
   
+
     nav {
       display: flex;
       justify-content: center;

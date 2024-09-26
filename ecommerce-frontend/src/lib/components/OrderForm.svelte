@@ -21,7 +21,7 @@
         cart.clearCart();
         // Redirect to order confirmation or orders list
       } catch (e) {
-        if (e instanceof Error) {
+         if (e instanceof Error) {
           error = e.message;
         } else {
           error = 'An unknown error occurred';
