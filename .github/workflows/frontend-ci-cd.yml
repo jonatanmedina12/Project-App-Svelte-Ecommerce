@@ -21,9 +21,9 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'  # Ajusta esto a la versión de Node.js que uses
+        node-version: '18'
     
-    - name: Display structure
+    - name: Display initial structure
       run: ls -R
     
     - name: Install dependencies
@@ -36,12 +36,29 @@ jobs:
         cd ecommerce-frontend
         npm run build
     
-  
-      
-    - name: Display build structure
-      run: ls -R ecommerce-frontend
-      
+    - name: Display post-build structure
+      run: |
+        echo "Content of ecommerce-frontend directory:"
+        ls -R ecommerce-frontend
     
+    - name: Identify build output
+      run: |
+        cd ecommerce-frontend
+        BUILD_OUTPUT=$(npm run build -- --dry-run | grep -oP '(?<=Directory: ).+')
+        echo "Build output directory: $BUILD_OUTPUT"
+        echo "BUILD_OUTPUT=$BUILD_OUTPUT" >> $GITHUB_ENV
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-build
+        path: ecommerce-frontend/${{ env.BUILD_OUTPUT }}
+        if-no-files-found: error
+    
+    - name: List uploaded artifacts
+      run: |
+        echo "Artifacts uploaded:"
+        find ecommerce-frontend/${{ env.BUILD_OUTPUT }} -type f
 
   deploy:
     needs: build
@@ -53,9 +70,12 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: frontend-build
+        path: build
     
     - name: Display downloaded structure
-      run: ls -R
+      run: |
+        echo "Content of downloaded artifact:"
+        ls -R build
     
     - name: Deploy to staging
       run: |
