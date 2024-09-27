@@ -41,12 +41,7 @@ jobs:
     - name: Display build structure
       run: ls -R ecommerce-frontend
       
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: frontend-build
-        path: ecommerce-frontend/build  # Ajusta esto si la carpeta de build es diferente
-        if-no-files-found: error  # Esto hará que el workflow falle si no se encuentran archivos
+    
 
   deploy:
     needs: build
