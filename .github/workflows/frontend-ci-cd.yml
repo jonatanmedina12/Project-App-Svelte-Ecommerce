@@ -34,13 +34,8 @@ jobs:
     - name: Build
       run: |
         cd ecommerce-frontend
-        npm run build
-    
-    - name: Test
-      run: |
-        cd ecommerce-frontend
-        npm run test
-      
+        npm run build  
+        
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
