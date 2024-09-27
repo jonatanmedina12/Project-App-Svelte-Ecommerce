@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit';
 
-const protectedRoutes = ['/orders'];
+const protectedRoutes = ['/orders','/products'];
 
 export const handle: Handle = async ({ event, resolve }) => {
   const session = event.cookies.get('session');

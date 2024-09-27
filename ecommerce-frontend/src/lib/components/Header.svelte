@@ -1,13 +1,16 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import { logout } from '$lib/services/api';
-    import { auth } from '$lib/stores/auth';
+    import { authStore } from '$lib/stores/auth';
+    import { goto } from '$app/navigation';
 
 
 
   async function handleLogout() {
     await logout();
-    auth.logout();
+    authStore.logout();
+    goto('/');
+
   }
 
 
@@ -25,19 +28,22 @@
             <li class="nav-item">
               <a class="nav-link" class:active={$page.url.pathname === '/'} href="/">Home</a>
             </li>
+            {#if $authStore.isAuthenticated}
+
             <li class="nav-item">
               <a class="nav-link" class:active={$page.url.pathname === '/products'} href="/products">Products</a>
             </li>
-            {#if $auth.isAuthenticated}
+            {/if}
+            {#if $authStore.isAuthenticated}
               <li class="nav-item">
                 <a class="nav-link" class:active={$page.url.pathname === '/orders'} href="/orders">Orders</a>
               </li>
             {/if}
           </ul>
           <ul class="navbar-nav">
-            {#if $auth.isAuthenticated}
+            {#if $authStore.isAuthenticated}
               <li class="nav-item">
-                <span class="nav-link">Welcome, {$auth.user?.username ?? "Sin datos"}</span>
+                <span class="nav-link">Welcome, {$authStore.user?.username ?? "Sin datos"}</span>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/" on:click|preventDefault={handleLogout}>Logout</a>

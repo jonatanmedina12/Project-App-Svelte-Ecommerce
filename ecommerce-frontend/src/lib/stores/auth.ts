@@ -1,30 +1,45 @@
 import { writable } from 'svelte/store';
-
-interface User {
-  username: string;
-  // Add other user properties as needed, for example:
-  // id: string;
-  // email: string;
-}
+import { browser } from '$app/environment';
 
 interface AuthState {
   isAuthenticated: boolean;
-  user: User | null;
+  user: any | null;
+  token: string | null;
 }
 
-function createAuthStore() {
+const createAuthStore = () => {
   const { subscribe, set, update } = writable<AuthState>({
     isAuthenticated: false,
-    user: null
+    user: null,
+    token: null
   });
 
   return {
     subscribe,
-    login: (user: User) => set({ isAuthenticated: true, user }),
-    logout: () => set({ isAuthenticated: false, user: null }),
-    setUser: (user: User) => update(state => ({ ...state, user })),
-    isAuthenticated: (value: boolean) => update(state => ({ ...state, isAuthenticated: value }))
+    login: (token: string, user: any) => {
+      if (browser) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      set({ isAuthenticated: true, user, token });
+    },
+    logout: () => {
+      if (browser) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+      set({ isAuthenticated: false, user: null, token: null });
+    },
+    initialize: () => {
+      if (browser) {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        if (token && user) {
+          set({ isAuthenticated: true, user, token });
+        }
+      }
+    }
   };
-}
+};
 
-export const auth = createAuthStore();
+export const authStore = createAuthStore();
