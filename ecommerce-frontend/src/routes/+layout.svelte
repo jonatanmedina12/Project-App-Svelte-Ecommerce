@@ -1,17 +1,22 @@
 <script lang="ts">
   import { page } from '$app/stores';
-
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
+  import { authStore } from '$lib/stores/auth';
   import 'bootstrap/dist/css/bootstrap.min.css';
-  import { auth } from '$lib/stores/auth';
   import '../app.css';
-  import { redirect } from '@sveltejs/kit';
+
   let previousPath = '/';
+  const protectedRoutes = ['/orders','/products'];
 
-  const protectedRoutes = ['/orders'];
+  onMount(() => {
+    authStore.initialize();
+  });
 
-  let currentPath = $page.url.pathname;
+  $: currentPath = $page.url.pathname;
+
   $: {
     if ($page.url.pathname !== currentPath) {
       previousPath = currentPath;
@@ -21,18 +26,11 @@
       const isProtectedRoute = protectedRoutes.some(route => currentPath.startsWith(route));
 
       // Redirige al usuario a la página de inicio de sesión si no está autenticado y está intentando acceder a una ruta protegida
-      if (isProtectedRoute && !$auth.isAuthenticated) {
-        throw redirect(302, `/login?redirectTo=${currentPath}`);
+      if (isProtectedRoute && !$authStore.isAuthenticated) {
+        goto(`/login?redirectTo=${currentPath}`);
       }
     }
   }
-  $: {
-    if ($page.url.pathname !== currentPath) {
-      previousPath = currentPath;
-      currentPath = $page.url.pathname;
-    }
-  }
-  
 </script>
 
 <div class="app-container">
@@ -41,9 +39,7 @@
   <main class="container mt-4">
     <div class="page-transition-container">
       {#key currentPath}
-        <div
-          class="page-content"
-        >
+        <div class="page-content">
           <slot />
         </div>
       {/key}
