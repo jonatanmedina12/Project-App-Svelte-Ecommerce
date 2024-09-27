@@ -34,13 +34,19 @@ jobs:
     - name: Build
       run: |
         cd ecommerce-frontend
-        npm run build  
-        
+        npm run build
+    
+  
+      
+    - name: Display build structure
+      run: ls -R ecommerce-frontend
+      
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: frontend-build
         path: ecommerce-frontend/build  # Ajusta esto si la carpeta de build es diferente
+        if-no-files-found: error  # Esto hará que el workflow falle si no se encuentran archivos
 
   deploy:
     needs: build
@@ -52,7 +58,9 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: frontend-build
-        path: build
+    
+    - name: Display downloaded structure
+      run: ls -R
     
     - name: Deploy to staging
       run: |
