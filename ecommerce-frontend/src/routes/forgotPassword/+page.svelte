@@ -9,21 +9,15 @@
     let loading = false;
 
     async function handleSubmit() {
-        if (!email) {
-            error = 'Please enter your email address.';
-            return;
-        }
-
         loading = true;
         error = '';
         success = '';
-
         try {
             await forgotPassword(email);
-            success = 'If an account exists for this email, you will receive password reset instructions shortly.';
-            email = ''; // Clear the email input after successful submission
+            success = 'Password reset instructions have been sent to your email.';
+            setTimeout(() => goto('/login'), 3000);
         } catch (err) {
-            error = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+            error = 'An error occurred. Please try again.';
         } finally {
             loading = false;
         }
@@ -44,14 +38,7 @@
                     <form on:submit|preventDefault={handleSubmit}>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input 
-                                type="email" 
-                                class="form-control" 
-                                id="email" 
-                                bind:value={email} 
-                                required
-                                disabled={loading}
-                            >
+                            <input type="email" class="form-control" id="email" bind:value={email} required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100" disabled={loading}>
                             {loading ? 'Sending...' : 'Send Reset Instructions'}

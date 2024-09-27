@@ -98,6 +98,33 @@ Puedes personalizar los estilos editando `src/app.css` y los archivos de compone
 ## Conexión con el backend
 
 Asegúrate de que tu backend proporcione los endpoints necesarios para las operaciones de autenticación, productos y pedidos. Ajusta las URLs en `src/lib/services/api.ts` si es necesario.
+## Frontend CI/CD
+
+Este proyecto utiliza GitHub Actions para implementar un pipeline de CI/CD para el frontend desarrollado en Svelte. El pipeline está configurado para construir, probar y desplegar automáticamente la aplicación cuando se realizan cambios en el repositorio.
+
+### Configuración del Workflow
+
+El archivo de configuración del workflow se encuentra en `.github/workflows/frontend-ci-cd.yml`. Este workflow se activa en los siguientes eventos:
+
+- Push a la rama `main`
+- Pull requests hacia la rama `main`
+
+### Pasos del Pipeline
+
+1. **Construcción (Build)**
+   - Configura el entorno Node.js
+   - Instala las dependencias del proyecto
+   - Compila la aplicación Svelte
+   - Ejecuta las pruebas (si están configuradas)
+
+2. **Despliegue (Deploy)**
+   - Se ejecuta solo para pushes a la rama `main`
+   - Descarga el artefacto construido
+   - Simula un despliegue a un entorno de staging (esto debe ser personalizado según tus necesidades de despliegue)
+
+3. **Control de Versiones**
+   - Crea una nueva release en GitHub con cada push exitoso a `main`
+   - Utiliza el número de ejecución del workflow como número de versión
 
 
 ## Licencia
