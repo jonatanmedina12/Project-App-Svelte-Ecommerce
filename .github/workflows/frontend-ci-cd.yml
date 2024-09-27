@@ -41,24 +41,17 @@ jobs:
         echo "Content of ecommerce-frontend directory:"
         ls -R ecommerce-frontend
     
-    - name: Identify build output
-      run: |
-        cd ecommerce-frontend
-        BUILD_OUTPUT=$(npm run build -- --dry-run | grep -oP '(?<=Directory: ).+')
-        echo "Build output directory: $BUILD_OUTPUT"
-        echo "BUILD_OUTPUT=$BUILD_OUTPUT" >> $GITHUB_ENV
-    
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: frontend-build
-        path: ecommerce-frontend/${{ env.BUILD_OUTPUT }}
+        path: ecommerce-frontend/build
         if-no-files-found: error
     
     - name: List uploaded artifacts
       run: |
         echo "Artifacts uploaded:"
-        find ecommerce-frontend/${{ env.BUILD_OUTPUT }} -type f
+        find ecommerce-frontend/build -type f
 
   deploy:
     needs: build
